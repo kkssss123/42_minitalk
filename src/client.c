@@ -6,7 +6,7 @@
 /*   By: sgwon <sgwon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 06:26:12 by sgwon             #+#    #+#             */
-/*   Updated: 2025/12/02 02:20:15 by sgwon            ###   ########.fr       */
+/*   Updated: 2025/12/02 02:57:31 by sgwon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	try_kill(int pid, int signum)
 	}
 }
 
-void	send(int pid, char bit)
+void	send(int pid, char c)
 {
 	int	i;
 
@@ -38,7 +38,7 @@ void	send(int pid, char bit)
 	while (i < 8)
 	{
 		g_ack = 0;
-		if (bit & (1 << i))
+		if (c & (1 << i))
 			try_kill(pid, SIGUSR1);
 		else
 			try_kill(pid, SIGUSR2);

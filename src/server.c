@@ -6,67 +6,67 @@
 /*   By: sgwon <sgwon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 06:25:18 by sgwon             #+#    #+#             */
-/*   Updated: 2025/12/02 01:30:04 by sgwon            ###   ########.fr       */
+/*   Updated: 2025/12/02 03:01:38 by sgwon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-char	*merge_msg(char *msg, char bit)
+char	*append(char *message, char c)
 {
 	char	*new_msg;
 	size_t	size;
 
-	if (!msg)
+	if (!message)
 	{
 		new_msg = (char *)malloc(2);
-		new_msg[0] = bit;
+		new_msg[0] = c;
 		new_msg[1] = '\0';
 		return (new_msg);
 	}
-	size = ft_strlen(msg);
+	size = ft_strlen(message);
 	new_msg = (char *)malloc(size + 2);
-	ft_memcpy(new_msg, msg, size);
-	new_msg[size] = bit;
+	ft_memcpy(new_msg, message, size);
+	new_msg[size] = c;
 	new_msg[size + 1] = '\0';
-	free(msg);
+	free(message);
 	return (new_msg);
 }
 
-void	process_bit(char **msg, char bit, siginfo_t *info)
+void	handle_byte(char **message, char c, siginfo_t *info)
 {
-	if (bit == '\0')
+	if (c == '\0')
 	{
-		if (*msg)
+		if (*message)
 		{
-			ft_printf("%s\n", *msg);
-			free(*msg);
-			*msg = NULL;
+			ft_printf("%s\n", *message);
+			free(*message);
+			*message = NULL;
 		}
 		kill(info->si_pid, SIGUSR2);
 	}
 	else
 	{
-		*msg = merge_msg(*msg, bit);
+		*message = append(*message, c);
 		kill(info->si_pid, SIGUSR1);
 	}
 }
 
 void	server_handler(int signum, siginfo_t *info, void *context)
 {
-	static int	bit = 0;
-	static char	i = 0;
-	static char	*msg = NULL;
+	static int	current_byte = 0;
+	static int	bit_idx = 0;
+	static char	*message = NULL;
 
 	(void)context;
 	if (signum == SIGUSR1)
-		bit |= 1 << i;
-	i++;
-	if (i == 8)
+		current_byte |= 1 << bit_idx;
+	bit_idx++;
+	if (bit_idx == 8)
 	{
-		process_bit(&msg, bit, info);
-		bit = 0;
-		i = 0;
+		handle_byte(&message, current_byte, info);
+		current_byte = 0;
+		bit_idx = 0;
 	}
 	else
 		kill(info->si_pid, SIGUSR1);
