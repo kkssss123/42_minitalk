@@ -6,7 +6,7 @@
 /*   By: sgwon <sgwon@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 06:26:12 by sgwon             #+#    #+#             */
-/*   Updated: 2025/12/02 02:02:31 by sgwon            ###   ########.fr       */
+/*   Updated: 2025/12/02 02:20:15 by sgwon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	send(int pid, char bit)
 		else
 			try_kill(pid, SIGUSR2);
 		while (!g_ack)
-			usleep(100);
+			pause();
 		i++;
 	}
 }
